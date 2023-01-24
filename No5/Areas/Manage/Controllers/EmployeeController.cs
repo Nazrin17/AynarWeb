@@ -9,7 +9,7 @@ using No5.Models;
 namespace No5.Areas.Area.Controllers
 {
     [Area("manage")]
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     public class EmployeeController : Controller
     {
         private readonly AnyarDbContext _context;
@@ -22,10 +22,9 @@ namespace No5.Areas.Area.Controllers
             _mapper = mapper;
             _env = env;
         }
-
         public IActionResult Index()
         {
-           List<Employee>emps= _context.Employees.Include(e=>e.Icons).ToList();
+            List<Employee> emps = _context.Employees.Include(e => e.Icons).ToList();
             if (emps == null)
             {
                 return View();
@@ -41,24 +40,23 @@ namespace No5.Areas.Area.Controllers
         [HttpPost]
         public IActionResult Create(EmployeePostDto postDto)
         {
-           
-             
+
+
             if (!ModelState.IsValid)
             {
                 foreach (var item in postDto.Icons)
                 {
-                if(item.Name == null || item.Url==null)
-                {
-                    ModelState.AddModelError("", "Error");
-                }
-
+                    if (item.Name == null || item.Url == null)
+                    {
+                        ModelState.AddModelError("Icons", "The Icon field is required.");
+                    }
                 }
                 return View();
             }
             Employee employee = _mapper.Map<Employee>(postDto);
             string imagename = Guid.NewGuid() + postDto.FormFile.FileName;
             string path = Path.Combine(_env.WebRootPath, "assets/img", imagename);
-            using(FileStream fileStream=new FileStream(path, FileMode.Create))
+            using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
                 postDto.FormFile.CopyTo(fileStream);
             }
@@ -73,7 +71,7 @@ namespace No5.Areas.Area.Controllers
         }
         public IActionResult Update(int id)
         {
-            Employee employee = _context.Employees.Include(e=>e.Icons).Where(e=>e.Id==id).FirstOrDefault();
+            Employee employee = _context.Employees.Include(e => e.Icons).Where(e => e.Id == id).FirstOrDefault();
             if (employee == null)
             {
                 return NotFound();
@@ -89,19 +87,23 @@ namespace No5.Areas.Area.Controllers
             {
                 ModelState.AddModelError("", "Invalid format");
             }
-            Employee employee = _context.Employees.Find(updateDto.getDto.Id);
+            Employee employee = _context.Employees.Include(e => e.Icons).Where(e => e.Id == updateDto.getDto.Id).FirstOrDefault();
             employee.Position = updateDto.postDto.Position;
             employee.Name = updateDto.postDto.Name;
             employee.About = updateDto.postDto.About;
             if (updateDto.postDto.FormFile != null)
             {
-                string imagename = Guid.NewGuid() +updateDto.postDto.FormFile.FileName;
+                string imagename = Guid.NewGuid() + updateDto.postDto.FormFile.FileName;
                 string path = Path.Combine(_env.WebRootPath, "assets/img", imagename);
                 using (FileStream fileStream = new FileStream(path, FileMode.Create))
                 {
                     updateDto.postDto.FormFile.CopyTo(fileStream);
                 }
                 employee.Image = imagename;
+            }
+            for (int i = 0; i < updateDto.postDto.Icons.Count; i++)
+            {
+                employee.Icons[i] = updateDto.postDto.Icons[i];
             }
             _context.Employees.Update(employee);
             _context.SaveChanges();
