@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Create";
+}
+@model EmployeePostDto
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Default form</h4>
+                        <p class="card-description">
+                            Basic form layout
+                        </p>
+                        <form class="forms-sample" method="post" enctype="multipart/form-data">
+                            <div asp-validation-summary="ModelOnly"></div>
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Name</label>
+                                <input type="text" asp-for="Name" placeholder="Name">
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">About</label>
+                                <input type="text" asp-for="About" placeholder="About">
+                                <span asp-validation-for="About"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Position</label>
+                                <input type="text" asp-for="Position" placeholder="Position">
+                                <span asp-validation-for="Position"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">Image</label>
+                                <input  asp-for="FormFile" placeholder="Image">
+                                <span asp-validation-for="FormFile"></span>
+                            </div>  
+                            @for (int i = 0; i < 3; i++)
+                            {
+                            <div class="form-group">
+                                <label for="exampleInputUsername1">SocialMedia</label>
+                                <input type="text" asp-for="Icons[i].Name" placeholder="icon">
+                                <input type="text" asp-for="Icons[i].Url" placeholder="icon">
+                                <span asp-validation-for="Icons"></span>
+                            </div> 
+                            }
+                      
+                            <div class="form-check form-check-flat form-check-primary">
+                                <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input">
+                                    Remember me
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary me-2">Submit</button>
+                            <button class="btn btn-light">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
